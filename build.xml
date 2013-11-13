@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<project name="wowza" default="jar" basedir=".">
+
+	<property name="jar.home.dir" value="jar"/>
+	<property name="jar.filename" value="ch.cargomedia.wms.jar"/>
+	<property name="core.build.dir" value="bin"/>
+	<property name="src.dir" value="src"/>
+
+	<path id="classpath">
+		<fileset dir="lib/" includes="**/*.jar"/>
+	</path>
+
+	<target name="jar">
+		<mkdir dir="${core.build.dir}"/>
+		<javac includeantruntime="false" classpathref="classpath" srcdir="${src.dir}" destdir="${core.build.dir}"/>
+		<jar jarfile="${jar.home.dir}/${jar.filename}">
+			<fileset dir="${core.build.dir}"/>
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="${core.build.dir}"/>
+	</target>
+
+	<target name="dev">
+		<antcall target="jar"/>
+		<exec executable="hostname" outputproperty="user.hostname"/>
+		<exec executable="scp">
+			<arg value="${jar.home.dir}/${jar.filename}"/>
+			<arg value="root@wowza1.local:/usr/local/WowzaMediaServer/lib/"/>
+		</exec>
+	</target>
+
+	<target name="dev-restart">
+		<antcall target="dev"/>
+		<exec executable="hostname" outputproperty="user.hostname"/>
+		<exec executable="ssh">
+			<arg value="root@wowza1.local"/>
+			<arg value="/etc/init.d/wowza restart"/>
+		</exec>
+	</target>
+</project>
