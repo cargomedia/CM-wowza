@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <project name="wowza" default="jar" basedir=".">
 
-	<property name="deployment.home.dir" value="../dev/deploy/resource/debian/files/wowza/usr/local/WowzaMediaServer-custominstall/lib"/>
+	<property name="jar.home.dir" value="jar"/>
 	<property name="jar.filename" value="ch.cargomedia.wms.jar"/>
 	<property name="core.build.dir" value="bin"/>
 	<property name="src.dir" value="src"/>
 
 	<path id="classpath">
-		<fileset dir="/Library/Java/Extensions/wowza" includes="**/*.jar"/>
+		<fileset dir="lib/" includes="**/*.jar"/>
 	</path>
 
 	<target name="jar">
 		<mkdir dir="${core.build.dir}"/>
 		<javac includeantruntime="false" classpathref="classpath" srcdir="${src.dir}" destdir="${core.build.dir}"/>
-		<jar jarfile="${deployment.home.dir}/${jar.filename}">
+		<jar jarfile="${jar.home.dir}/${jar.filename}">
 			<fileset dir="${core.build.dir}"/>
 		</jar>
 	</target>
@@ -26,7 +26,7 @@
 		<antcall target="jar"/>
 		<exec executable="hostname" outputproperty="user.hostname"/>
 		<exec executable="scp">
-			<arg value="${deployment.home.dir}/${jar.filename}"/>
+			<arg value="${jar.home.dir}/${jar.filename}"/>
 			<arg value="root@wowza1.local:/usr/local/WowzaMediaServer/lib/"/>
 		</exec>
 	</target>
