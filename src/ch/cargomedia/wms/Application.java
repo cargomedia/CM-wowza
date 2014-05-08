@@ -1,8 +1,10 @@
 package ch.cargomedia.wms;
 
+import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
 import ch.cargomedia.wms.stream.Videostream;
 import ch.cargomedia.wms.stream.VideostreamList;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
+import com.wowza.wms.application.IApplicationInstance;
 
 public class Application {
 
@@ -27,6 +29,11 @@ public class Application {
 
   public VideostreamList<String, VideostreamPublisher> getVideostreamPublisherList() {
     return this._videostreamPublisherList;
+  }
+
+  public String getCmBinPath() {
+    IApplicationInstance appInstance = ConnectionsListener.appInstance;
+    return appInstance.getProperties().getPropertyStr(Config.XMLPROPERTY_CM_BIN_PATH);
   }
 
 }

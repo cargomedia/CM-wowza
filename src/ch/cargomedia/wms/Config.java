@@ -5,6 +5,7 @@ public final class Config {
   public static final String RPC_UNPUBLISH = "CM_Stream_Video.unpublish";
   public static final String RPC_SUBSCRIBE = "CM_Stream_Video.subscribe";
   public static final String RPC_PUBLISH = "CM_Stream_Video.publish";
+  public static final String XMLPROPERTY_CM_BIN_PATH = "cm_bin_path";
   public static final String XMLPROPERTY_THUMBNAIL_WIDTH = "ThumbnailWidth";
   public static final int THUMBNAILS_INTERVAL = 10000;
 }
