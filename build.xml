@@ -24,7 +24,6 @@
 
 	<target name="dev">
 		<antcall target="jar"/>
-		<exec executable="hostname" outputproperty="user.hostname"/>
 		<exec executable="scp">
 			<arg value="${jar.home.dir}/${jar.filename}"/>
 			<arg value="root@wowza1.local:/usr/local/WowzaMediaServer/lib/"/>
@@ -33,7 +32,6 @@
 
 	<target name="dev-restart">
 		<antcall target="dev"/>
-		<exec executable="hostname" outputproperty="user.hostname"/>
 		<exec executable="ssh">
 			<arg value="root@wowza1.local"/>
 			<arg value="/etc/init.d/wowza restart"/>
