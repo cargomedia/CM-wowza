@@ -6,20 +6,20 @@ import ch.cargomedia.wms.stream.VideostreamPublisher;
 import java.util.TimerTask;
 
 public class ThumbnailCount extends TimerTask {
-	private String storagePath;
-	private VideostreamPublisher videostreamPublisher;
+  private String storagePath;
+  private VideostreamPublisher videostreamPublisher;
 
-	public ThumbnailCount(VideostreamPublisher videostreamPublisher, String storagePath) {
-		this.storagePath = storagePath;
-		this.videostreamPublisher = videostreamPublisher;
-	}
+  public ThumbnailCount(VideostreamPublisher videostreamPublisher, String storagePath) {
+    this.storagePath = storagePath;
+    this.videostreamPublisher = videostreamPublisher;
+  }
 
-	public void run() {
-		Integer thumbnailCount = Utils.getThumbnailCount(storagePath);
-		this.videostreamPublisher.setThumbnailCount(thumbnailCount);
-	}
+  public void run() {
+    Integer thumbnailCount = Utils.getThumbnailCount(storagePath);
+    this.videostreamPublisher.setThumbnailCount(thumbnailCount);
+  }
 
-	public void shutdown() {
-		this.cancel();
-	}
+  public void shutdown() {
+    this.cancel();
+  }
 }

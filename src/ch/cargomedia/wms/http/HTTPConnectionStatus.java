@@ -14,28 +14,28 @@ import java.io.OutputStream;
 
 public class HTTPConnectionStatus extends HTTProvider2Base {
 
-	@Override
-	public void onHTTPRequest(IVHost vhost, IHTTPRequest req, IHTTPResponse resp) {
-		if (!doHTTPAuthentication(vhost, req, resp))
-			return;
+  @Override
+  public void onHTTPRequest(IVHost vhost, IHTTPRequest req, IHTTPResponse resp) {
+    if (!doHTTPAuthentication(vhost, req, resp))
+      return;
 
-		VideostreamList<String, VideostreamPublisher> publishers = Application.getInstance().getVideostreamPublisherList();
+    VideostreamList<String, VideostreamPublisher> publishers = Application.getInstance().getVideostreamPublisherList();
 
-		String publisherJSON = "{}";
-		if (publishers != null) {
-			JSONSerializer serializer = new JSONSerializer().exclude("*.class");
-			publisherJSON = serializer.serialize(publishers);
-		}
+    String publisherJSON = "{}";
+    if (publishers != null) {
+      JSONSerializer serializer = new JSONSerializer().exclude("*.class");
+      publisherJSON = serializer.serialize(publishers);
+    }
 
-		try {
-			resp.setHeader("Content-Type", "application/json");
-			resp.setHeader("Connection", "close");
-			OutputStream out = resp.getOutputStream();
-			byte[] outBytes = publisherJSON.getBytes();
-			out.write(outBytes);
-			out.close();
-		} catch (Exception e) {
-			WMSLoggerFactory.getLogger(null).error("HTTPConnection failed: " + e.toString());
-		}
-	}
+    try {
+      resp.setHeader("Content-Type", "application/json");
+      resp.setHeader("Connection", "close");
+      OutputStream out = resp.getOutputStream();
+      byte[] outBytes = publisherJSON.getBytes();
+      out.write(outBytes);
+      out.close();
+    } catch (Exception e) {
+      WMSLoggerFactory.getLogger(null).error("HTTPConnection failed: " + e.toString());
+    }
+  }
 }
