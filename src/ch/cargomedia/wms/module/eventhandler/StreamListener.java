@@ -2,13 +2,12 @@ package ch.cargomedia.wms.module.eventhandler;
 
 import ch.cargomedia.wms.Application;
 import ch.cargomedia.wms.Config;
-import ch.cargomedia.wms.Utils;
 import ch.cargomedia.wms.rpc.RPC;
 import ch.cargomedia.wms.stream.Videostream;
 import ch.cargomedia.wms.stream.VideostreamList;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import ch.cargomedia.wms.stream.VideostreamSubscriber;
-import ch.cargomedia.wms.transcoder.Transcoder;
+import ch.cargomedia.wms.transcoder.Archiver;
 import ch.cargomedia.wms.transcoder.Thumbnailer;
 import com.wowza.wms.amf.AMFPacket;
 import com.wowza.wms.application.WMSProperties;
@@ -150,8 +149,7 @@ public class StreamListener implements IMediaStreamActionNotify3 {
       RPC rpc = new RPC(stream.getClient().getClientId());
       rpc.notifyUnpublish(stream.getName());
 
-      String[] files = Utils.getArchiveFilePaths(stream, videostreamPublisher);
-      Transcoder transcoder = new Transcoder(files[Utils.MP4_LIVESTREAM], files[Utils.MP4_ARCHIVESTREAM]);
+      Archiver transcoder = new Archiver(stream);
       transcoder.start();
     }
   }
