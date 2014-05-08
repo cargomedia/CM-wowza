@@ -1,5 +1,6 @@
 package ch.cargomedia.wms.transcoder;
 
+import ch.cargomedia.wms.Utils;
 import com.wowza.wms.logging.WMSLoggerFactory;
 
 import java.io.File;
@@ -15,20 +16,23 @@ public class Transcoder extends Thread {
   }
 
   public void run() {
-    String[] cmd = new String[]{"ffmpeg", "-threads", "1", "-i", inputStream, "-acodec", "libfaac", "-vcodec", "copy", "-ar", "22050", "-y",
-        outputStream, "-loglevel", "quiet"};
+    String[] command = new String[]{
+        "ffmpeg",
+        "-threads", "1",
+        "-i", inputStream,
+        "-acodec", "libfaac",
+        "-vcodec", "copy",
+        "-ar", "22050",
+        "-y",
+        "-loglevel", "warning",
+        outputStream,
+    };
     try {
-      Process process = Runtime.getRuntime().exec(cmd);
-      process.waitFor();
-
-      if (process.exitValue() != 0) {
-        throw new Exception("transcorder exited with code: " + process.exitValue());
-      }
-
+      Utils.exec(command);
       File streamFile = new File(inputStream);
       streamFile.delete();
     } catch (Exception e) {
-      WMSLoggerFactory.getLogger(null).error("Error while transcoding : " + outputStream + " Message: " + e.getMessage());
+      WMSLoggerFactory.getLogger(null).error("Error while transcoding `" + inputStream + "`: " + e.getMessage());
     }
   }
 

@@ -42,7 +42,7 @@ public class Thumbnailer extends TimerTask {
     int height = (int) ((double) width / ((_videostreamPublisher.getWidth() / (double) _videostreamPublisher.getHeight())));
     String[] command = new String[]{
         "ffmpeg",
-        "-threads", "1",
+        "-Xthreads", "1",
         "-i", inputStream,
         "-an",
         "-vcodec", "png",
@@ -50,13 +50,11 @@ public class Thumbnailer extends TimerTask {
         "-f", "image2",
         "-s", String.valueOf(width) + "x" + String.valueOf(height),
         "-y",
-        "-loglevel", "quiet",
+        "-loglevel", "warning",
         file.getAbsolutePath(),
     };
-    ProcessBuilder processbuilder = new ProcessBuilder(command);
     try {
-      Process process = processbuilder.start();
-      process.waitFor();
+      Utils.exec(command);
     } catch (Exception e) {
       file = null;
       WMSLoggerFactory.getLogger(null).error("Cannot capture thumbnail: " + e.getMessage());

@@ -4,8 +4,12 @@ import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import com.wowza.wms.application.IApplicationInstance;
 import com.wowza.wms.stream.IMediaStream;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.UUID;
 
 public class Utils {
@@ -43,6 +47,27 @@ public class Utils {
       dir.mkdirs();
     }
     return new File(dir + "/" + UUID.randomUUID().toString());
+  }
+
+  public static String exec(String[] command) throws Exception {
+    Logger.getLogger("ch.cargomedia.wms.module.eventhandler.StreamListener").info("exec: " + StringUtils.join(command, " "));
+    ProcessBuilder builder = new ProcessBuilder(command);
+    builder.redirectErrorStream(true);
+    Process process = builder.start();
+
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    String line;
+    String output = "";
+    while ((line = reader.readLine()) != null) {
+      output += line + "\n";
+    }
+
+    if (process.waitFor() != 0) {
+      throw new Exception(String.format("Command exited with code `%s`. \nCommand: %s \nOutput: \n%s",
+          process.exitValue(), StringUtils.join(command, " "), output));
+    }
+
+    return output;
   }
 
 }
