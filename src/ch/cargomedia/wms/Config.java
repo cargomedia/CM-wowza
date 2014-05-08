@@ -9,5 +9,4 @@ public final class Config {
   public static final String XMLPROPERTY_THUMBNAIL_WIDTH = "ThumbnailWidth";
   public static final Integer BUCKETS_COUNT = 10000;
   public static final int THUMBNAILS_INTERVAL = 10000;
-  public static final int THUMBNAILER_FFMPEG_RETRY_COUNT = 10;
 }

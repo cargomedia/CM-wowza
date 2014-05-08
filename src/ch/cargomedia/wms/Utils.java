@@ -6,6 +6,7 @@ import com.wowza.wms.application.IApplicationInstance;
 import com.wowza.wms.stream.IMediaStream;
 
 import java.io.File;
+import java.util.UUID;
 
 public class Utils {
   public static final int MP4_LIVESTREAM = 0;
@@ -35,18 +36,13 @@ public class Utils {
         + streamId % Config.BUCKETS_COUNT;
   }
 
-  public static String getThumbnailStoragePath(VideostreamPublisher publisher) {
-    int streamId = publisher.getStreamId();
-    String md5Hash = publisher.getClientIdMD5Hash();
-    return getStoragePath(publisher) + "/" + String.valueOf(streamId) + "-" + md5Hash + "-thumbs";
-  }
-
-  public static Integer getThumbnailCount(String path) {
-    File[] thumbnailFiles = new File(path).listFiles();
-    if (null == thumbnailFiles) {
-      return 0;
+  public static File getTempFile() {
+    String dirPath = System.getProperty("java.io.tmpdir") + "/" + "wowza-cm";
+    File dir = new File(dirPath);
+    if (!dir.exists()) {
+      dir.mkdirs();
     }
-    return thumbnailFiles.length;
+    return new File(dir + "/" + UUID.randomUUID().toString());
   }
 
 }

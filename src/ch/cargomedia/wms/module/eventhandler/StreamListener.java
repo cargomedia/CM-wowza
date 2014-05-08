@@ -8,7 +8,6 @@ import ch.cargomedia.wms.stream.Videostream;
 import ch.cargomedia.wms.stream.VideostreamList;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import ch.cargomedia.wms.stream.VideostreamSubscriber;
-import ch.cargomedia.wms.transcoder.ThumbnailCount;
 import ch.cargomedia.wms.transcoder.Thumbnailer;
 import ch.cargomedia.wms.transcoder.Transcoder;
 import com.wowza.wms.amf.AMFPacket;
@@ -24,8 +23,7 @@ import java.util.Timer;
 public class StreamListener implements IMediaStreamActionNotify3 {
 
   private Videostream _videostream;
-  private ThumbnailCount _thumbnailCountTask;
-  private volatile Thumbnailer _thumbnailer;
+  private Thumbnailer _thumbnailer;
 
   public StreamListener(Videostream videostream) {
     this._videostream = videostream;
@@ -128,12 +126,9 @@ public class StreamListener implements IMediaStreamActionNotify3 {
     RPC rpc = new RPC(stream.getClientId());
     int streamId = rpc.getPublishStreamId(videostreamPublisher, stream.getName());
     videostreamPublisher.setStreamId(streamId);
-    String storagePath = Utils.getThumbnailStoragePath(videostreamPublisher);
-    _thumbnailCountTask = new ThumbnailCount(videostreamPublisher, storagePath);
+    _thumbnailer = new Thumbnailer(videostreamPublisher, stream);
     Timer timer = new Timer();
-    timer.scheduleAtFixedRate(_thumbnailCountTask, Config.THUMBNAILS_INTERVAL, Config.THUMBNAILS_INTERVAL);
-    _thumbnailer = new Thumbnailer(videostreamPublisher, stream, storagePath);
-    _thumbnailer.start();
+    timer.scheduleAtFixedRate(_thumbnailer, 0, Config.THUMBNAILS_INTERVAL);
     synchronized (videostreamPublishList) {
       videostreamPublishList.put(stream.getName(), videostreamPublisher);
     }
@@ -144,11 +139,7 @@ public class StreamListener implements IMediaStreamActionNotify3 {
     VideostreamPublisher videostreamPublisher = videostreamPublishList.get(stream.getName());
 
     if (_thumbnailer != null) {
-      _thumbnailer.killRunningProcess();
-    }
-
-    if (_thumbnailCountTask != null) {
-      _thumbnailCountTask.shutdown();
+      _thumbnailer.cancel();
     }
 
     if (videostreamPublisher != null) {
@@ -156,12 +147,8 @@ public class StreamListener implements IMediaStreamActionNotify3 {
         videostreamPublishList.remove(videostreamPublisher.getStreamName());
       }
 
-      Integer thumbnailCount = Utils.getThumbnailCount(Utils.getThumbnailStoragePath(videostreamPublisher));
-      videostreamPublisher.setThumbnailCount(thumbnailCount);
-
       RPC rpc = new RPC(stream.getClient().getClientId());
-      rpc.notifyUnpublish(stream.getName(), videostreamPublisher.getThumbnailCount());
-
+      rpc.notifyUnpublish(stream.getName());
 
       String[] files = Utils.getArchiveFilePaths(stream, videostreamPublisher);
       Transcoder finalTranscoder = new Transcoder(files[Utils.MP4_LIVESTREAM], files[Utils.MP4_ARCHIVESTREAM]);

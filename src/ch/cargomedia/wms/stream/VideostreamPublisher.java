@@ -11,7 +11,6 @@ public class VideostreamPublisher extends Videostream {
   private Integer _width;
   private Integer _height;
   private Integer _streamId = 0;
-  private Integer _thumbnailCount = 0;
   private String _clientIdMD5Hash = "";
   private Long _startTime;
 
@@ -37,10 +36,6 @@ public class VideostreamPublisher extends Videostream {
     this._streamId = streamId;
   }
 
-  public synchronized void setThumbnailCount(Integer thumbnailCount) {
-    this._thumbnailCount = thumbnailCount;
-  }
-
   public synchronized void setClientIdMD5Hash(String clientIdMD5Hash) {
     this._clientIdMD5Hash = clientIdMD5Hash;
   }
@@ -59,10 +54,6 @@ public class VideostreamPublisher extends Videostream {
 
   public Integer getStreamId() {
     return _streamId;
-  }
-
-  public Integer getThumbnailCount() {
-    return _thumbnailCount;
   }
 
   public String getClientIdMD5Hash() {

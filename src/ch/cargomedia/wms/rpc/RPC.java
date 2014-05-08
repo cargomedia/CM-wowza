@@ -5,7 +5,6 @@ import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import ch.cargomedia.wms.stream.VideostreamSubscriber;
 import com.wowza.wms.application.WMSProperties;
-import com.wowza.wms.logging.WMSLoggerFactory;
 import flexjson.JSONSerializer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,7 +33,6 @@ public class RPC {
     params.add(videostream.getStartTimestamp());
     params.add(videostream.getWidth());
     params.add(videostream.getHeight());
-    params.add(videostream.getThumbnailCount());
     params.add(videostream.getData());
 
     String channelId;
@@ -63,10 +61,9 @@ public class RPC {
     getPostHttp(Config.RPC_UNSUBSCRIBE, params);
   }
 
-  public void notifyUnpublish(String streamKey, Integer thumbnailCount) throws Exception {
+  public void notifyUnpublish(String streamKey) throws Exception {
     Vector<Object> params = new Vector<Object>();
     params.add(streamKey);
-    params.add(thumbnailCount);
     params.add(String.valueOf(this.clientId));
     getPostHttp(Config.RPC_UNPUBLISH, params);
   }
