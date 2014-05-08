@@ -5,6 +5,8 @@
 	<property name="jar.filename" value="ch.cargomedia.wms.jar"/>
 	<property name="core.build.dir" value="bin"/>
 	<property name="src.dir" value="src"/>
+    <property name="vm.user" value="root" />
+    <property name="vm.host" value="virtualmachine.dev" />
 
 	<path id="classpath">
 		<fileset dir="lib/" includes="**/*.jar"/>
@@ -26,14 +28,14 @@
 		<antcall target="jar"/>
 		<exec executable="scp">
 			<arg value="${jar.home.dir}/${jar.filename}"/>
-			<arg value="root@wowza1.local:/usr/local/WowzaMediaServer/lib/"/>
+			<arg value="${vm.user}@${vm.host}:/usr/local/WowzaStreamingEngine/lib/"/>
 		</exec>
 	</target>
 
 	<target name="dev-restart">
 		<antcall target="dev"/>
 		<exec executable="ssh">
-			<arg value="root@wowza1.local"/>
+			<arg value="${vm.user}@${vm.host}"/>
 			<arg value="/etc/init.d/wowza restart"/>
 		</exec>
 	</target>
