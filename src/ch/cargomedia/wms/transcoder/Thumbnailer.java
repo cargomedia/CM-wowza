@@ -14,12 +14,14 @@ import java.util.TimerTask;
 
 public class Thumbnailer extends TimerTask {
 
+  private IMediaStream _stream;
   private String _input;
   private int _width;
   private int _height;
 
   public Thumbnailer(VideostreamPublisher videostreamPublisher, IMediaStream stream) {
     IApplicationInstance appInstance = ConnectionsListener.appInstance;
+    _stream = stream;
     _input = "rtmp://127.0.0.1/" + appInstance.getApplication().getName() + "/" + stream.getName();
     _width = appInstance.getProperties().getPropertyInt(Config.XMLPROPERTY_THUMBNAIL_WIDTH, 240);
     _height = (int) ((double) _width / ((videostreamPublisher.getWidth() / (double) videostreamPublisher.getHeight())));
@@ -45,9 +47,10 @@ public class Thumbnailer extends TimerTask {
 
       Utils.exec(new String[]{
           Application.getInstance().getCmBinPath(),
-          "wowza",
-          "import-thumbnail",
-          "--file=" + output.getAbsolutePath(),
+          "stream",
+          "wowza-import-thumbnail",
+          _stream.getName(),
+          output.getAbsolutePath(),
       });
 
     } catch (Exception e) {
