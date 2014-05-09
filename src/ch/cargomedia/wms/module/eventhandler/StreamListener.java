@@ -1,7 +1,6 @@
 package ch.cargomedia.wms.module.eventhandler;
 
 import ch.cargomedia.wms.Application;
-import ch.cargomedia.wms.Config;
 import ch.cargomedia.wms.rpc.RPC;
 import ch.cargomedia.wms.stream.Videostream;
 import ch.cargomedia.wms.stream.VideostreamList;
@@ -125,9 +124,12 @@ public class StreamListener implements IMediaStreamActionNotify3 {
     RPC rpc = new RPC(stream.getClientId());
     int streamChannelId = rpc.getPublishStreamId(videostreamPublisher, stream.getName());
     videostreamPublisher.setStreamChannelId(streamChannelId);
+
     _thumbnailer = new Thumbnailer(videostreamPublisher);
+    Integer thumbnailInterval = Application.getInstance().getConfig().getThumbnailInterval();
     Timer timer = new Timer();
-    timer.scheduleAtFixedRate(_thumbnailer, 0, Config.THUMBNAILS_INTERVAL);
+    timer.scheduleAtFixedRate(_thumbnailer, 0, thumbnailInterval);
+
     synchronized (videostreamPublishList) {
       videostreamPublishList.put(stream.getName(), videostreamPublisher);
     }

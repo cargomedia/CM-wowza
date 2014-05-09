@@ -1,7 +1,7 @@
 package ch.cargomedia.wms.rpc;
 
+import ch.cargomedia.wms.Application;
 import ch.cargomedia.wms.Config;
-import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import ch.cargomedia.wms.stream.VideostreamSubscriber;
 import com.wowza.wms.application.WMSProperties;
@@ -21,9 +21,9 @@ public class RPC {
   private Integer clientId;
 
   public RPC(Integer clientId) {
-    WMSProperties streamProperties = ConnectionsListener.appInstance.getProperties();
+    Application application = Application.getInstance();
     this.clientId = clientId;
-    this.rpcUrl = streamProperties.getPropertyStr("RPCUrl");
+    this.rpcUrl = application.getConfig().getRpcUrl();
   }
 
   public int getPublishStreamId(VideostreamPublisher videostream, String streamKey) throws Exception {

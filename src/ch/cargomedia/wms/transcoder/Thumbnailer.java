@@ -1,11 +1,8 @@
 package ch.cargomedia.wms.transcoder;
 
 import ch.cargomedia.wms.Application;
-import ch.cargomedia.wms.Config;
 import ch.cargomedia.wms.Utils;
-import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
-import com.wowza.wms.application.IApplicationInstance;
 import com.wowza.wms.logging.WMSLoggerFactory;
 
 import java.io.File;
@@ -15,14 +12,16 @@ public class Thumbnailer extends TimerTask {
 
   private VideostreamPublisher _stream;
   private String _input;
+  private String _pathBinCm;
   private int _width;
   private int _height;
 
   public Thumbnailer(VideostreamPublisher stream) {
-    IApplicationInstance appInstance = ConnectionsListener.appInstance;
+    Application application = Application.getInstance();
     _stream = stream;
-    _input = "rtmp://127.0.0.1/" + appInstance.getApplication().getName() + "/" + stream.getStreamName();
-    _width = appInstance.getProperties().getPropertyInt(Config.XMLPROPERTY_THUMBNAIL_WIDTH, 240);
+    _input = "rtmp://127.0.0.1/" + application.getName() + "/" + stream.getStreamName();
+    _pathBinCm = application.getConfig().getCmBinPath();
+    _width = application.getConfig().getThumbnailWidth();
     _height = (int) ((double) _width / ((stream.getWidth() / (double) stream.getHeight())));
   }
 
@@ -45,7 +44,7 @@ public class Thumbnailer extends TimerTask {
       });
 
       Utils.exec(new String[]{
-          Application.getInstance().getCmBinPath(),
+          _pathBinCm,
           "stream",
           "import-video-thumbnail",
           String.valueOf(_stream.getStreamChannelId()),

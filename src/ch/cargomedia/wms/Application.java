@@ -10,10 +10,15 @@ public class Application {
 
   private static Application _instance;
 
+  private Config _config;
+  private IApplicationInstance _appInstance;
+
   private VideostreamList<Integer, Videostream> _videostreamList = new VideostreamList<Integer, Videostream>();
   private VideostreamList<String, VideostreamPublisher> _videostreamPublisherList = new VideostreamList<String, VideostreamPublisher>();
 
   private Application() {
+    _appInstance = ConnectionsListener.appInstance;
+    _config = new Config(_appInstance.getProperties());
   }
 
   public static Application getInstance() {
@@ -31,14 +36,16 @@ public class Application {
     return this._videostreamPublisherList;
   }
 
-  public String getCmBinPath() {
-    IApplicationInstance appInstance = ConnectionsListener.appInstance;
-    String propertyName = Config.XMLPROPERTY_CM_BIN_PATH;
-    String value = appInstance.getProperties().getPropertyStr(propertyName);
-    if (null == value || 0 == value.length()) {
-      throw new RuntimeException("Missing config property `" + propertyName + "`.");
-    }
-    return value;
+  public Config getConfig() {
+    return _config;
+  }
+
+  public String getName() {
+    return _appInstance.getApplication().getName();
+  }
+
+  public String getStreamStoragePath() {
+    return _appInstance.getStreamStoragePath();
   }
 
 }
