@@ -3,8 +3,8 @@ package ch.cargomedia.wms.stream;
 import java.util.Calendar;
 
 public class Videostream {
-  protected long startTimestamp;
-  protected int clientId;
+  protected Long startTimestamp;
+  protected Integer clientId;
   protected String data = "";
 
   public Videostream(String data, Integer clientId) {
@@ -17,7 +17,7 @@ public class Videostream {
     return new Videostream(data, clientId);
   }
 
-  protected long _initStartTime() {
+  protected Long _initStartTime() {
     return Calendar.getInstance().getTimeInMillis() / 1000;
   }
 
@@ -25,11 +25,11 @@ public class Videostream {
     return this.data;
   }
 
-  public int getClientId() {
+  public Integer getClientId() {
     return this.clientId;
   }
 
-  public long getStartTimestamp() {
+  public Long getStartTimestamp() {
     return this.startTimestamp;
   }
 }

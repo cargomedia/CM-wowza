@@ -7,24 +7,23 @@ import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import com.wowza.wms.application.IApplicationInstance;
 import com.wowza.wms.logging.WMSLoggerFactory;
-import com.wowza.wms.stream.IMediaStream;
 
 import java.io.File;
 import java.util.TimerTask;
 
 public class Thumbnailer extends TimerTask {
 
-  private IMediaStream _stream;
+  private VideostreamPublisher _stream;
   private String _input;
   private int _width;
   private int _height;
 
-  public Thumbnailer(VideostreamPublisher videostreamPublisher, IMediaStream stream) {
+  public Thumbnailer(VideostreamPublisher stream) {
     IApplicationInstance appInstance = ConnectionsListener.appInstance;
     _stream = stream;
-    _input = "rtmp://127.0.0.1/" + appInstance.getApplication().getName() + "/" + stream.getName();
+    _input = "rtmp://127.0.0.1/" + appInstance.getApplication().getName() + "/" + stream.getStreamName();
     _width = appInstance.getProperties().getPropertyInt(Config.XMLPROPERTY_THUMBNAIL_WIDTH, 240);
-    _height = (int) ((double) _width / ((videostreamPublisher.getWidth() / (double) videostreamPublisher.getHeight())));
+    _height = (int) ((double) _width / ((stream.getWidth() / (double) stream.getHeight())));
   }
 
   public void run() {
@@ -49,7 +48,7 @@ public class Thumbnailer extends TimerTask {
           Application.getInstance().getCmBinPath(),
           "stream",
           "wowza-import-thumbnail",
-          _stream.getName(),
+          String.valueOf(_stream.getStreamChannelId()),
           output.getAbsolutePath(),
       });
 

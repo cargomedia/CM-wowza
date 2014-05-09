@@ -123,9 +123,9 @@ public class StreamListener implements IMediaStreamActionNotify3 {
     }
 
     RPC rpc = new RPC(stream.getClientId());
-    int streamId = rpc.getPublishStreamId(videostreamPublisher, stream.getName());
-    videostreamPublisher.setStreamId(streamId);
-    _thumbnailer = new Thumbnailer(videostreamPublisher, stream);
+    int streamChannelId = rpc.getPublishStreamId(videostreamPublisher, stream.getName());
+    videostreamPublisher.setStreamChannelId(streamChannelId);
+    _thumbnailer = new Thumbnailer(videostreamPublisher);
     Timer timer = new Timer();
     timer.scheduleAtFixedRate(_thumbnailer, 0, Config.THUMBNAILS_INTERVAL);
     synchronized (videostreamPublishList) {
@@ -149,7 +149,7 @@ public class StreamListener implements IMediaStreamActionNotify3 {
       RPC rpc = new RPC(stream.getClient().getClientId());
       rpc.notifyUnpublish(stream.getName());
 
-      Archiver transcoder = new Archiver(stream);
+      Archiver transcoder = new Archiver(videostreamPublisher);
       transcoder.start();
     }
   }

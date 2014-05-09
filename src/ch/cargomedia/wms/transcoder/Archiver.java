@@ -3,19 +3,21 @@ package ch.cargomedia.wms.transcoder;
 import ch.cargomedia.wms.Application;
 import ch.cargomedia.wms.Utils;
 import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
+import ch.cargomedia.wms.stream.VideostreamPublisher;
 import com.wowza.wms.application.IApplicationInstance;
 import com.wowza.wms.logging.WMSLoggerFactory;
-import com.wowza.wms.stream.IMediaStream;
 
 import java.io.File;
 
 public class Archiver extends Thread {
 
+  private VideostreamPublisher _stream;
   private File _input;
 
-  public Archiver(IMediaStream stream) {
+  public Archiver(VideostreamPublisher stream) {
     IApplicationInstance appInstance = ConnectionsListener.appInstance;
-    _input = new File(appInstance.getStreamStoragePath() + "/" + stream.getName() + ".mp4");
+    _stream = stream;
+    _input = new File(appInstance.getStreamStoragePath() + "/" + stream.getStreamName() + ".mp4");
   }
 
   public void run() {
@@ -36,9 +38,10 @@ public class Archiver extends Thread {
 
       Utils.exec(new String[]{
           Application.getInstance().getCmBinPath(),
-          "wowza",
-          "import-archive",
-          "--file=" + output.getAbsolutePath(),
+          "stream",
+          "wowza-import-archive",
+          String.valueOf(_stream.getStreamChannelId()),
+          output.getAbsolutePath(),
       });
 
     } catch (Exception e) {

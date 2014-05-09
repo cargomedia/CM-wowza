@@ -10,7 +10,7 @@ public class VideostreamPublisher extends Videostream {
   private String _streamName;
   private Integer _width;
   private Integer _height;
-  private Integer _streamId = 0;
+  private Integer _streamChannelId;
   private String _clientIdMD5Hash = "";
   private Long _startTime;
 
@@ -32,8 +32,8 @@ public class VideostreamPublisher extends Videostream {
     return _subscribers;
   }
 
-  public synchronized void setStreamId(Integer streamId) {
-    this._streamId = streamId;
+  public synchronized void setStreamChannelId(Integer streamChannelId) {
+    this._streamChannelId = streamChannelId;
   }
 
   public synchronized void setClientIdMD5Hash(String clientIdMD5Hash) {
@@ -52,8 +52,8 @@ public class VideostreamPublisher extends Videostream {
     return _height;
   }
 
-  public Integer getStreamId() {
-    return _streamId;
+  public Integer getStreamChannelId() {
+    return _streamChannelId;
   }
 
   public String getClientIdMD5Hash() {
