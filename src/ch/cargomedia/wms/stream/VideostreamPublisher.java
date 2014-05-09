@@ -10,7 +10,7 @@ public class VideostreamPublisher extends Videostream {
   private String _streamName;
   private Integer _width;
   private Integer _height;
-  private Integer _streamChannelId;
+  private Integer _streamChannelId = 0;
   private String _clientIdMD5Hash = "";
   private Long _startTime;
 
