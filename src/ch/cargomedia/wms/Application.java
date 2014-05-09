@@ -33,7 +33,12 @@ public class Application {
 
   public String getCmBinPath() {
     IApplicationInstance appInstance = ConnectionsListener.appInstance;
-    return appInstance.getProperties().getPropertyStr(Config.XMLPROPERTY_CM_BIN_PATH);
+    String propertyName = Config.XMLPROPERTY_CM_BIN_PATH;
+    String value = appInstance.getProperties().getPropertyStr(propertyName);
+    if (null == value || 0 == value.length()) {
+      throw new RuntimeException("Missing config property `" + propertyName + "`.");
+    }
+    return value;
   }
 
 }
