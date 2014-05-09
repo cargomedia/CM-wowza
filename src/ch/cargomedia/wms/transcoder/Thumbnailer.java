@@ -47,7 +47,7 @@ public class Thumbnailer extends TimerTask {
       Utils.exec(new String[]{
           Application.getInstance().getCmBinPath(),
           "stream",
-          "wowza-import-thumbnail",
+          "import-video-thumbnail",
           String.valueOf(_stream.getStreamChannelId()),
           output.getAbsolutePath(),
       });

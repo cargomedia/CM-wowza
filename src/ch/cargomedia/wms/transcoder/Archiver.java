@@ -39,7 +39,7 @@ public class Archiver extends Thread {
       Utils.exec(new String[]{
           Application.getInstance().getCmBinPath(),
           "stream",
-          "wowza-import-archive",
+          "import-video-archive",
           String.valueOf(_stream.getStreamChannelId()),
           output.getAbsolutePath(),
       });
