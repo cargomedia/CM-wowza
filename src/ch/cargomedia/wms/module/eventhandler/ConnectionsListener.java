@@ -15,9 +15,8 @@ import com.wowza.wms.request.RequestFunction;
 import com.wowza.wms.stream.IMediaStream;
 
 
+@SuppressWarnings("unused")
 public class ConnectionsListener extends ModuleBase implements IModuleOnStream {
-
-  public static IApplicationInstance appInstance;
 
   @SuppressWarnings("unused")
   public void onAppStart(IApplicationInstance applInstance) {

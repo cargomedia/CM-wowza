@@ -12,6 +12,7 @@ import flexjson.JSONSerializer;
 
 import java.io.OutputStream;
 
+@SuppressWarnings("unused")
 public class HTTPConnectionStatus extends HTTProvider2Base {
 
   @Override
