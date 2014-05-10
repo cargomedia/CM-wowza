@@ -21,7 +21,7 @@ public class ConnectionsListener extends ModuleBase implements IModuleOnStream {
 
   @SuppressWarnings("unused")
   public void onAppStart(IApplicationInstance applInstance) {
-    appInstance = applInstance;
+    Application.getInstance().setAppInstance(applInstance);
   }
 
   @SuppressWarnings("unused")
@@ -35,7 +35,6 @@ public class ConnectionsListener extends ModuleBase implements IModuleOnStream {
 
     sendResult(client, params, statValues);
   }
-
 
   @SuppressWarnings("unused")
   public static void onConnect(IClient client, RequestFunction function, AMFDataList params) {
