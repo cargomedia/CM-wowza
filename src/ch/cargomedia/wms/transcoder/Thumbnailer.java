@@ -4,6 +4,7 @@ import ch.cargomedia.wms.Application;
 import ch.cargomedia.wms.Utils;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import com.wowza.wms.logging.WMSLoggerFactory;
+import com.wowza.wms.stream.IMediaStream;
 
 import java.io.File;
 import java.util.TimerTask;
@@ -15,10 +16,12 @@ public class Thumbnailer extends TimerTask {
   private String _pathBinCm;
   private int _width;
   private int _height;
+  private IMediaStream _mediaStream;
 
-  public Thumbnailer(VideostreamPublisher stream) {
+  public Thumbnailer(VideostreamPublisher stream, IMediaStream mediaStream) {
     Application application = Application.getInstance();
     _stream = stream;
+    _mediaStream = mediaStream;
     _input = "rtmp://127.0.0.1/" + application.getName() + "/" + stream.getStreamName();
     _pathBinCm = application.getConfig().getCmBinPath();
     _width = application.getConfig().getThumbnailWidth();
@@ -52,7 +55,9 @@ public class Thumbnailer extends TimerTask {
       });
 
     } catch (Exception e) {
-      WMSLoggerFactory.getLogger(null).error("Cannot create thumbnail: " + e.getMessage());
+      if (_mediaStream.isOpen()) {
+        WMSLoggerFactory.getLogger(null).error("Cannot create thumbnail: " + e.getMessage());
+      }
     }
     output.delete();
   }

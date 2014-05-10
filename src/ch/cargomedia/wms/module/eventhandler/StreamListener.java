@@ -125,7 +125,7 @@ public class StreamListener implements IMediaStreamActionNotify3 {
     int streamChannelId = rpc.getPublishStreamId(videostreamPublisher, stream.getName());
     videostreamPublisher.setStreamChannelId(streamChannelId);
 
-    _thumbnailer = new Thumbnailer(videostreamPublisher);
+    _thumbnailer = new Thumbnailer(videostreamPublisher, stream);
     Integer thumbnailInterval = Application.getInstance().getConfig().getThumbnailInterval();
     Timer timer = new Timer();
     timer.scheduleAtFixedRate(_thumbnailer, 0, thumbnailInterval);
