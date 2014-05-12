@@ -1,75 +1,64 @@
 package ch.cargomedia.wms.transcoder;
 
-import ch.cargomedia.wms.Config;
-import ch.cargomedia.wms.module.eventhandler.ConnectionsListener;
+import ch.cargomedia.wms.Application;
+import ch.cargomedia.wms.Utils;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
-
-import com.wowza.wms.application.IApplicationInstance;
 import com.wowza.wms.logging.WMSLoggerFactory;
 import com.wowza.wms.stream.IMediaStream;
 
 import java.io.File;
+import java.util.TimerTask;
 
+public class Thumbnailer extends TimerTask {
 
-public class Thumbnailer extends Thread {
+  private VideostreamPublisher _stream;
+  private String _input;
+  private String _pathBinCm;
+  private int _width;
+  private int _height;
+  private IMediaStream _mediaStream;
 
-  private Process process;
-  private VideostreamPublisher _videostreamPublisher;
-  private IMediaStream _stream;
-  private String _storagePath;
-  private boolean _reRun = true;
-
-  public Thumbnailer(VideostreamPublisher videostreamPublisher, IMediaStream stream, String storagePath) {
-    _videostreamPublisher = videostreamPublisher;
+  public Thumbnailer(VideostreamPublisher stream, IMediaStream mediaStream) {
+    Application application = Application.getInstance();
     _stream = stream;
-    _storagePath = storagePath;
+    _mediaStream = mediaStream;
+    _input = "rtmp://127.0.0.1/" + application.getName() + "/" + stream.getStreamName();
+    _pathBinCm = application.getConfig().getCmBinPath();
+    _width = application.getConfig().getThumbnailWidth();
+    _height = (int) ((double) _width / ((stream.getWidth() / (double) stream.getHeight())));
   }
 
-  @Override
   public void run() {
+    File output = Utils.getTempFile("png");
     try {
-      Integer count = 0;
-      while (_reRun) {
-        Integer thumbnailStartNumber = _videostreamPublisher.getThumbnailCount() + 1;
-        if (count > 0) {
-          WMSLoggerFactory.getLogger(null).error("Thumbnailer restarted " + count + " times");
-          if (count >= Config.THUMBNAILER_FFMPEG_RETRY_COUNT) {
-            throw new Exception("Thumbnailer - Giving up (Restarted " + count + " times)");
-          }
-        }
-        count++;
 
-        IApplicationInstance appInstance = ConnectionsListener.appInstance;
-        String inputStream = "rtmp://127.0.0.1/" + appInstance.getApplication().getName() + "/" + _stream.getName();
-        File storageDir = new File(_storagePath);
-        if (!storageDir.exists()) {
-          if (!storageDir.mkdirs()) {
-            throw new Exception("Storage Path Not Created (" + _storagePath + ")");
-          }
-        }
-        int thumbnailWidth = appInstance.getProperties().getPropertyInt(Config.XMLPROPERTY_THUMBNAIL_WIDTH, 240);
-        int thumbnailHeight = (int) ((double) thumbnailWidth / ((_videostreamPublisher.getWidth() / (double) _videostreamPublisher.getHeight())));
-        Integer thumbnailInterval = Config.THUMBNAILS_INTERVAL;
-        Float intervalFPS = (float) 1 / (thumbnailInterval / 1000);
+      Utils.exec(new String[]{
+          "ffmpeg",
+          "-threads", "1",
+          "-i", _input,
+          "-an",
+          "-vcodec", "png",
+          "-vframes", "1",
+          "-f", "image2",
+          "-s", String.valueOf(_width) + "x" + String.valueOf(_height),
+          "-y",
+          "-loglevel", "warning",
+          output.getAbsolutePath(),
+      });
 
-        String[] command = new String[]{"ffmpeg", "-threads", "1", "-i", inputStream, "-an", "-vcodec", "png", "-f", "image2",
-            "-s", String.valueOf(thumbnailWidth) + "x" + String.valueOf(thumbnailHeight),
-            "-r", String.valueOf(intervalFPS), "-start_number", String.valueOf(thumbnailStartNumber),
-            "-y", "-loglevel", "quiet", _storagePath + "/%d.png"};
-        ProcessBuilder processbuilder = new ProcessBuilder(command);
-        process = processbuilder.start();
-        process.waitFor();
-      }
+      Utils.exec(new String[]{
+          _pathBinCm,
+          "stream",
+          "import-video-thumbnail",
+          String.valueOf(_stream.getStreamChannelId()),
+          output.getAbsolutePath(),
+      });
+
     } catch (Exception e) {
-      WMSLoggerFactory.getLogger(null).error("Thumbnail Generator Failure: " + e.getMessage());
+      if (_mediaStream.isOpen()) {
+        WMSLoggerFactory.getLogger(null).error("Cannot create thumbnail: " + e.getMessage());
+      }
     }
-  }
-
-  public void killRunningProcess() {
-    if (null == this.process) {
-      return;
-    }
-    _reRun = false;
-    this.process.destroy();
+    output.delete();
   }
 }
