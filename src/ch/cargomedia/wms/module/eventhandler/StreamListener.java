@@ -140,7 +140,7 @@ public class StreamListener implements IMediaStreamActionNotify3 {
     VideostreamPublisher videostreamPublisher = videostreamPublishList.get(stream.getName());
 
     if (_thumbnailer != null) {
-      _thumbnailer.cancel();
+      _thumbnailer.interrupt();
     }
 
     if (videostreamPublisher != null) {
