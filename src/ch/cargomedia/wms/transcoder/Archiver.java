@@ -2,12 +2,15 @@ package ch.cargomedia.wms.transcoder;
 
 import ch.cargomedia.wms.Application;
 import ch.cargomedia.wms.Utils;
+import ch.cargomedia.wms.process.ProcessSequence;
 import ch.cargomedia.wms.stream.VideostreamPublisher;
 import com.wowza.wms.logging.WMSLoggerFactory;
 
 import java.io.File;
 
 public class Archiver extends Thread {
+
+  private ProcessSequence _processSequence = new ProcessSequence();
 
   private VideostreamPublisher _stream;
   private File _input;
@@ -23,8 +26,7 @@ public class Archiver extends Thread {
   public void run() {
     File output = Utils.getTempFile("mp4");
     try {
-
-      Utils.exec(new String[]{
+      _processSequence.addCommand(new String[]{
           "ffmpeg",
           "-threads", "1",
           "-i", _input.getAbsolutePath(),
@@ -35,14 +37,14 @@ public class Archiver extends Thread {
           "-loglevel", "warning",
           output.getAbsolutePath(),
       });
-
-      Utils.exec(new String[]{
+      _processSequence.addCommand(new String[]{
           _pathBinCm,
           "stream",
           "import-video-archive",
           String.valueOf(_stream.getStreamChannelId()),
           output.getAbsolutePath(),
       });
+      _processSequence.runAll();
 
     } catch (Exception e) {
       WMSLoggerFactory.getLogger(null).error("Cannot create archive: " + e.getMessage());
