@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 public class InterruptibleProcess extends Thread {
 
   private String[] _command;
+  private Process _process = null;
   private BufferedReader _processReader = null;
   private Boolean _interrupted = false;
 
@@ -25,7 +26,7 @@ public class InterruptibleProcess extends Thread {
     try {
       ProcessBuilder builder = new ProcessBuilder(_command);
       builder.redirectErrorStream(true);
-      Process _process = builder.start();
+      _process = builder.start();
 
       _processReader = new BufferedReader(new InputStreamReader(_process.getInputStream()));
       String line;
@@ -51,7 +52,7 @@ public class InterruptibleProcess extends Thread {
   @Override
   public void interrupt() {
     _interrupted = true;
-    this._closeProcessReader();
+    this._interruptProcess();
     super.interrupt();
   }
 
@@ -73,7 +74,10 @@ public class InterruptibleProcess extends Thread {
     }
   }
 
-  private void _closeProcessReader() {
+  private void _interruptProcess() {
+    if (null != _process) {
+      _process.destroy();
+    }
     if (null != _processReader) {
       try {
         _processReader.close();
