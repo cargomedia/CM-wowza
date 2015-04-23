@@ -39,8 +39,8 @@ public class Archiver extends Thread {
       });
       _processSequence.addCommand(new String[]{
           _pathBinCm,
-          "stream",
-          "import-video-archive",
+          "video-stream",
+          "import-archive",
           String.valueOf(_stream.getStreamChannelId()),
           output.getAbsolutePath(),
       });
