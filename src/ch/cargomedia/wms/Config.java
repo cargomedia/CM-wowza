@@ -3,10 +3,10 @@ package ch.cargomedia.wms;
 import com.wowza.wms.application.WMSProperties;
 
 public final class Config {
-  public static final String RPC_UNSUBSCRIBE = "CM_Stream_Video.unsubscribe";
-  public static final String RPC_UNPUBLISH = "CM_Stream_Video.unpublish";
-  public static final String RPC_SUBSCRIBE = "CM_Stream_Video.subscribe";
-  public static final String RPC_PUBLISH = "CM_Stream_Video.publish";
+  public static final String RPC_UNSUBSCRIBE = "CM_VideoStream_Service.unsubscribe";
+  public static final String RPC_UNPUBLISH = "CM_VideoStream_Service.unpublish";
+  public static final String RPC_SUBSCRIBE = "CM_VideoStream_Service.subscribe";
+  public static final String RPC_PUBLISH = "CM_VideoStream_Service.publish";
 
   private WMSProperties _properties;
 

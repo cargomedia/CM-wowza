@@ -48,8 +48,8 @@ public class Thumbnailer extends TimerTask {
       });
       _processSequence.addCommand(new String[]{
           _pathBinCm,
-          "stream",
-          "import-video-thumbnail",
+          "video-stream",
+          "import-thumbnail",
           String.valueOf(_stream.getStreamChannelId()),
           output.getAbsolutePath(),
       });
