@@ -13,3 +13,12 @@ Run the ant task `dev-restart` to build the jar, copy it into the VM and restart
 ```
 ant dev-restart -Dvm.host=my-vm.dev
 ```
+
+API
+---
+~(list is not full)~
+
+|Path  |  Method  | Params | Response
+|------|----------|--------|---------
+| /status | GET    |    -   | JSON serialised array [ streamName => Publisher, ... ]
+| /stop | POST    |  int  clientId | JSON containing "success" or "error" key with appropriate values depending on operation status
